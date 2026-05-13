@@ -1,0 +1,120 @@
+{
+  "$schema": "./component.specification.schema.json",
+  "Component": "Pin",
+  "Package": "pin",
+  "Description": "Pin is a two-state button web component that toggles between a pinned and an unpinned status. Status is reflected as a DOM attribute and emitted through public semantic events.",
+  "Tag": "pin-button",
+  "Composition": {
+    "template": {
+      "description": "The HTML template for the pin component.",
+      "contains": ["div.icon"],
+      "type": "template",
+      "id": "pin-button"
+    },
+    "div.icon": {
+      "description": "The main container of the pin component, styled as a button. Hosts the SVG icon variants and receives the click gesture.",
+      "contains": ["svg.pinned", "svg.unpinned"],
+      "type": "div",
+      "class": "icon",
+      "cached": true
+    },
+    "svg.pinned": {
+      "description": "The SVG icon shown when status is 'pinned'.",
+      "type": "svg",
+      "class": "pinned"
+    },
+    "svg.unpinned": {
+      "description": "The SVG icon shown when status is 'unpinned'.",
+      "type": "svg",
+      "class": "unpinned"
+    }
+  },
+  "States": {
+    "status": {
+      "type": "Status",
+      "description": "The pinned or unpinned status of the component. Compulsory attribute-backed state — the attribute is always present in the DOM and always reflects the current status.",
+      "values": ["pinned", "unpinned"],
+      "default": "unpinned",
+      "readonly": false,
+      "attribute": {
+        "optional": false
+      }
+    }
+  },
+  "Operations": {
+    "pin": {
+      "description": "Sets status to 'pinned'.",
+      "parameters": [],
+      "returns": "void"
+    },
+    "unpin": {
+      "description": "Sets status to 'unpinned'.",
+      "parameters": [],
+      "returns": "void"
+    },
+    "toggle": {
+      "description": "Toggles the status between 'pinned' and 'unpinned'.",
+      "parameters": [],
+      "returns": "void"
+    }
+  },
+  "Events": {
+    "onpin": {
+      "description": "Dispatched when status changes from 'unpinned' to 'pinned'.",
+      "parameters": [
+        {
+          "name": "detail",
+          "type": "object",
+          "description": "Contains the new status of the component.",
+          "properties": {
+            "status": {
+              "type": "Status",
+              "values": ["pinned"],
+              "description": "The accepted status after the transition."
+            }
+          }
+        }
+      ]
+    },
+    "onunpin": {
+      "description": "Dispatched when status changes from 'pinned' to 'unpinned'.",
+      "parameters": [
+        {
+          "name": "detail",
+          "type": "object",
+          "description": "Contains the new status of the component.",
+          "properties": {
+            "status": {
+              "type": "Status",
+              "values": ["unpinned"],
+              "description": "The accepted status after the transition."
+            }
+          }
+        }
+      ]
+    }
+  },
+  "Gestures": {
+    "click": {
+      "description": "Toggles the status when the icon container is clicked.",
+      "triggers": {
+        "operation": "toggle",
+        "condition": "on element.icon"
+      }
+    },
+    "hover": {
+      "description": "Visual feedback when the icon container is hovered.",
+      "effects": {
+        "properties": ["background-color", "border-color", "box-shadow", "fill"],
+        "condition": "on element.icon"
+      }
+    },
+    "focus": {
+      "description": "Visual feedback when the icon container receives keyboard focus.",
+      "effects": {
+        "properties": ["outline", "outline-offset"],
+        "condition": "on element.icon"
+      }
+    }
+  }
+}

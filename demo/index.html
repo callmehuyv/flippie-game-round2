@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
   <head>
-    <title>Component</title>
+    <title>pin-button — demo</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="html.style.css" />
 
@@ -11,6 +11,15 @@
 
   <body>
     <script src="index.js" type="module"></script>
-    <component-template></component-template>
+
+    <div class="demo">
+      <pin-button id="default"></pin-button>
+      <span class="label">default (status="unpinned")</span>
+    </div>
+
+    <div class="demo">
+      <pin-button id="preset" status="pinned"></pin-button>
+      <span class="label">preset (status="pinned")</span>
+    </div>
   </body>
 </html>

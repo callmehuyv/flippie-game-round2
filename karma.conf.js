@@ -29,7 +29,7 @@ module.exports = function (config) {
     reporters: ["spec", "coverage-istanbul", "json"],
     jsonReporter: {
       dir: "./report",
-      filename: "component.template.report.json"
+      filename: "pin-button.report.json"
     },
     coverageIstanbulInstrumenter: {
       esModules: true
@@ -40,6 +40,8 @@ module.exports = function (config) {
       skipFilesWithNoCoverage: true
     },
     browsers: ["ChromeHeadless"],
+    hostname: "127.0.0.1",
+    listenAddress: "127.0.0.1",
     singleRun: true,
     logLevel: config.LOG_DISABLE
   });

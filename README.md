@@ -1,107 +1,116 @@
 ![License: CC BY-NC-SA 4.0](https://flat.badgen.net/static/license/CC-BY-NC-SA-4.0/green)
 
-# Component Template
+# pin-button
 
-This is a template for creating a new component. It includes a basic structure for the component, as well as a set of scripts for building, testing, and documenting the component.
+A two-state pinned/unpinned button web component built on the [`@scalable.software/component`](https://github.com/scalable-software/component) framework, following the specification-driven implementation policies declared in [`component.template`](https://github.com/scalable-software/component.template).
 
-## Getting Started
+Originally implemented as a vanilla custom element ([round 1](https://github.com/callmehuyv/flippie-game)), this round-2 repository ports the component into the canonical template structure: a specification file, metadata, validation, component class, template, stylesheet, demo, and unit tests.
 
-To create a new component, you can use this template as a starting point. To do so, click the "Use this template" button at the top of the repository page. This will create a new repository with the same structure as this one.
+## Public Contract
 
-Once you have created a new repository, you can clone it to your local machine and start working on your component.
+The complete public contract is declared in [`specifications/pin.specifications.json`](./specifications/pin.specifications.json). At a glance:
 
-```bash
-git clone
+| Layer       | Members                                |
+| ----------- | -------------------------------------- |
+| Tag         | `pin-button`                           |
+| Composition | `template → div.icon → svg.pinned, svg.unpinned` |
+| State       | `status` — compulsory, values `pinned \| unpinned`, default `unpinned` |
+| Operations  | `pin()`, `unpin()`, `toggle()`         |
+| Events      | `onpin`, `onunpin` (detail: `{ status }`) |
+| Gestures    | `click` (triggers `toggle`), `hover` & `focus` (visual) |
+
+### Imperative API
+
+```ts
+import { Pin, Status } from "@callmehuyv/pin-button";
+
+await Pin.Template.load("pin.template.html");
+customElements.define(Pin.Tag, Pin);
+
+const pin = document.querySelector("pin-button") as Pin;
+pin.pin();      // status → "pinned"
+pin.unpin();    // status → "unpinned"
+pin.toggle();   // flips
+pin.status;     // "pinned" | "unpinned"
+
+pin.onpin = (e) => console.log((e as CustomEvent).detail.status);
 ```
 
-## Install Dependencies
+### Declarative API
 
-1. Before creating a new component, first install the dependencies:
+```html
+<pin-button></pin-button>                  <!-- defaults to status="unpinned" -->
+<pin-button status="pinned"></pin-button>  <!-- starts pinned -->
+```
+
+The `status` attribute is **compulsory**: it is always present in the DOM and always reflects the canonical internal value.
+
+## Project Layout
+
+```
+src/
+  pin.meta.ts          — canonical vocabulary: Tag, CSS, Attributes, State, Status, Operation, Event, Gesture
+  pin.validation.ts    — runtime enforcement of declared value domains
+  pin.ts               — component class
+  pin.template.html    — realized composition
+  pin.style.css        — presentation + state-reflective styling
+  index.ts             — public entry point
+
+specifications/
+  pin.specifications.json          — source of truth
+  component.specification.schema.json
+
+test/unit/
+  pin.meta.test.ts       — metadata vocabulary
+  pin.validation.test.ts — Validate.status
+  pin.test.ts            — composition, state, operation, event behavior
+
+demo/
+  index.html, index.js   — local browser demo
+```
+
+## Install
 
 ```bash
 npm install
 ```
 
-2. Then run the `test` to ensure everything is in working order:
+## Test
 
 ```bash
 npm test
 ```
 
-> note: a coverage and test report will be generated in the `coverage` directory and `report` directory, respectively.
+Coverage and test reports land in `coverage/` and `report/`, respectively.
 
-3. Finally, run the `document` script to generate the component API documentation:
+## Build
+
+```bash
+npm run build
+```
+
+Compiles TypeScript to `dist/`, copies the template HTML and stylesheet next to the compiled JS.
+
+## Serve the Demo
+
+```bash
+npm run serve
+```
+
+Opens `demo/index.html` with `@web/dev-server`. The demo uses [`importmap/importmap.build.js`](./importmap/importmap.build.js) to resolve `@callmehuyv/pin-button` from `dist/`.
+
+## Document
 
 ```bash
 npm run document
 ```
 
-> note: The API documentation will be generated in the `docs` directory. You can review this by opening the `index.html` file in the `docs` directory in a web browser.
+Generates TypeDoc API docs into `docs/`.
 
-## Creating a New Component
+## Policies
 
-To create a new component, you should first update the package metadata:
-
-## Update Package Metadata
-
-Update the package name across all relevant files in this project:
-
-1. Specifications: update name and add package metadata in the `component.specifications.json` file in the `specifications` directory.
-
-2. Package: `package.json` in the `root` directory.
-
-3. Typescript Config: both `tsconfig.json` files are in the `root` directory.
-
-4. ES Module: `importmap.js` files in the `importmap` directory.
-
-5. Component: update the file names in `src` folder and class name.
-
-6. Unit Testing: The `wallaby.js` and `karma.conf.js` files are in the `root` directory, the file names and the package name used in unit tests: `test/unit`
-
-7. Demo: The `index.js` file in the `demo` directory.
-
-8. Confirm that the component name has been updated in all relevant files by running the `test` script:
-
-```bash
-npm test
-```
-
-## Creating a New Component
-
-To create a new component:
-
-1. Review the directory and file structure of the fake `component` implementation.
-2. Study this software architecture implementation policies (available from repository owner).
-3. Define the component specifications using the `component.specifications.json` template file provided.
-4. Stickly follow a TDD development approach in feature branches.
-5. After complete implementation of a feature, `test`, `build`, and generate the `documentation` (see below)
-6. Update the demo scaffold in the `demo` directory to reflect the new component's API and functionality.
-7. Lastly do a pull request to the `main` branch and merge it if everything checks out.
-
-### Testing the Component
-
-To test the component, you can use the `test` script. This script will run the component's test suite and generate both a test and coverage report.
-
-```bash
-npm test
-```
-
-### Document the Component API
-
-To document the component API, you can use the `docs` script. This script will generate a set of documentation files for the component.
-
-```bash
-npm run document
-```
+Implementation policies live under [`.claude/context/`](./.claude/context/) and are summarized in [`.claude/CLAUDE.md`](./.claude/CLAUDE.md). The policies in use here are: composition, state, validation, operation, event, gesture, testing, and workflow. The vocabulary (`status`, `pinned`, `unpinned`, `onpin`, `onunpin`, `toggle`, `Attributes.STATUS`, etc.) is the canonical example used throughout those policy documents.
 
 ## License
 
-> This software and its documentation are released under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International Public License (CC BY-NC-SA 4.0). This means you are free to share, copy, distribute, and transmit the work, and to adapt it, but only under the following conditions:
->
-> Attribution: You must attribute the work in the manner specified by the author or licensor (but not in any way that suggests that they endorse you or your use of the work).
->
-> NonCommercial: You may not use this material for commercial purposes.
->
-> ShareAlike: If you alter, transform, or build upon this work, you may distribute the resulting work only under the same or similar license to this one.
->
-> For more details, please visit the full [license agreement](https://creativecommons.org/licenses/by-nc-sa/4.0/).
+This software is released under the Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International Public License (CC BY-NC-SA 4.0). See the [full license](https://creativecommons.org/licenses/by-nc-sa/4.0/).
