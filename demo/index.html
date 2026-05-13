@@ -1,7 +1,9 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
-    <title>pin-button — demo</title>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>pin-button — round 2 showcase</title>
     <link rel="icon" href="favicon.ico" type="image/x-icon" />
     <link rel="stylesheet" href="html.style.css" />
 
@@ -12,14 +14,124 @@
   <body>
     <script src="index.js" type="module"></script>
 
-    <div class="demo">
-      <pin-button id="default"></pin-button>
-      <span class="label">default (status="unpinned")</span>
-    </div>
+    <main>
+      <header class="hero">
+        <h1>&lt;pin-button&gt;</h1>
+        <p class="tagline">
+          A two-state pinned/unpinned button — specification-driven web
+          component built on <code>@scalable.software/component</code>.
+        </p>
+        <p class="links">
+          <a href="https://github.com/callmehuyv/flippie-game-round2" target="_blank" rel="noopener">repo ↗</a>
+          <span class="sep">·</span>
+          <a href="https://github.com/callmehuyv/flippie-game-round2/blob/main/specifications/pin.specifications.json" target="_blank" rel="noopener">spec ↗</a>
+          <span class="sep">·</span>
+          <a href="https://github.com/callmehuyv/flippie-game" target="_blank" rel="noopener">round 1 ↗</a>
+        </p>
+      </header>
 
-    <div class="demo">
-      <pin-button id="preset" status="pinned"></pin-button>
-      <span class="label">preset (status="pinned")</span>
-    </div>
+      <!-- 1) Declarative usage -->
+      <section class="panel">
+        <h2>1. Declarative usage</h2>
+        <p class="muted">
+          Drop the element into HTML. The <code>status</code> attribute is
+          compulsory and always present in the DOM — set it to
+          <code>"pinned"</code> to start pinned.
+        </p>
+
+        <div class="row">
+          <div class="cell">
+            <pin-button id="declarative-default"></pin-button>
+            <span class="caption">default</span>
+            <code class="snippet">&lt;pin-button&gt;&lt;/pin-button&gt;</code>
+          </div>
+          <div class="cell">
+            <pin-button id="declarative-preset" status="pinned"></pin-button>
+            <span class="caption">preset to pinned</span>
+            <code class="snippet">&lt;pin-button status="pinned"&gt;&lt;/pin-button&gt;</code>
+          </div>
+        </div>
+      </section>
+
+      <!-- 2) Imperative API -->
+      <section class="panel">
+        <h2>2. Imperative API</h2>
+        <p class="muted">
+          Three public operations: <code>pin()</code>, <code>unpin()</code>,
+          <code>toggle()</code>. The <code>status</code> property is also
+          settable directly.
+        </p>
+
+        <div class="row imperative">
+          <div class="cell">
+            <pin-button id="imperative-target"></pin-button>
+            <span class="caption">
+              status: <code id="status-readout">unpinned</code>
+            </span>
+          </div>
+
+          <div class="controls">
+            <button type="button" data-op="pin">pin()</button>
+            <button type="button" data-op="unpin">unpin()</button>
+            <button type="button" data-op="toggle">toggle()</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- 3) Event subscription -->
+      <section class="panel">
+        <h2>3. Event subscription</h2>
+        <p class="muted">
+          The <code>onpin</code> and <code>onunpin</code> setters wire up a
+          single handler each. Payload arrives on <code>event.detail</code>.
+        </p>
+
+        <div class="row events">
+          <div class="cell">
+            <pin-button id="events-target"></pin-button>
+            <span class="caption">click to fire an event</span>
+          </div>
+
+          <ol id="event-log" class="event-log" aria-live="polite">
+            <li class="placeholder">no events yet — click the button</li>
+          </ol>
+        </div>
+
+        <pre class="code"><code>const pin = document.querySelector('pin-button');
+
+pin.onpin   = (e) =&gt; console.log('pinned',   e.detail);
+pin.onunpin = (e) =&gt; console.log('unpinned', e.detail);
+
+pin.toggle();   // → fires onpin   { status: "pinned"   }
+pin.toggle();   // → fires onunpin { status: "unpinned" }</code></pre>
+      </section>
+
+      <!-- 4) Gestures -->
+      <section class="panel">
+        <h2>4. Gestures</h2>
+        <p class="muted">
+          One behavioural gesture (<code>click</code>) that triggers
+          <code>toggle</code>, plus two visual gestures
+          (<code>hover</code>, <code>focus</code>) realised entirely in CSS.
+          Try <kbd>Tab</kbd> to the button to see the focus ring.
+        </p>
+
+        <div class="row">
+          <div class="cell">
+            <pin-button id="gesture-target"></pin-button>
+            <span class="caption">hover &amp; focus me</span>
+          </div>
+        </div>
+      </section>
+
+      <footer class="footer">
+        <p>
+          built on
+          <a href="https://github.com/scalable-software/component.template" target="_blank" rel="noopener">component.template</a>
+          ·
+          <a href="https://github.com/scalable-software/component" target="_blank" rel="noopener">scalable-software/component</a>
+        </p>
+      </footer>
+    </main>
   </body>
 </html>
